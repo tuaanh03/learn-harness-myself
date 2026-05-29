@@ -1,0 +1,117 @@
+# Result Exercise 2
+
+## Lần 1 - Mục tiêu sản phẩm hiện tại là gì?
+
+Sản phẩm là ứng dụng desktop Electron tên **Knowledge Base**, dùng để quản lý kho tri thức cá nhân cục bộ: người dùng nhập tài liệu `.txt`/`.md`, xem tài liệu, lập chỉ mục nội dung và đặt câu hỏi nhận câu trả lời có trích dẫn.
+
+| Kết luận | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| Phạm vi hiện tại của `project-02` là **agent-readable workspace với import, detail view và persistence**. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 2-3) |
+| Mục tiêu sản phẩm rộng hơn là ứng dụng Knowledge Base cho phép nhập tài liệu, chia nội dung thành chunks có thể tìm kiếm và hỏi đáp có citation. | `Rõ ràng từ artefact trạng thái` | `docs/PRODUCT.md` (dòng 3-5); `docs/ARCHITECTURE.md` (dòng 3-5) |
+| Dữ liệu phải được xử lý và lưu cục bộ, không phụ thuộc API bên ngoài; Q&A phiên bản này dùng mock patterns, không dùng LLM. | `Rõ ràng từ artefact trạng thái` | `docs/PRODUCT.md` (dòng 31-37, 58-63) |
+| Chức năng đã hoàn thành hiện tại gồm: mở cửa sổ ứng dụng, danh sách tài liệu, ô hỏi đáp, thư mục dữ liệu và nhập tài liệu `.txt`/`.md`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 5-43, `status: "pass"`) |
+| Phần việc hiện còn thiếu là **hiển thị đầy đủ nội dung/metadata/xóa tài liệu** và **lưu tài liệu qua các lần khởi động lại ứng dụng**. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 45-59, `status: "not-started"`) |
+| Việc nhập tài liệu hiện chỉ tồn tại trong phiên chạy hiện tại, chưa tạo luồng persistence hoàn chỉnh. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 37-43 và 53-59) |
+
+### Kết luận ngắn
+
+Mục tiêu gần nhất là hoàn thiện luồng **import -> xem chi tiết nội dung -> lưu bền qua restart** cho Knowledge Base cục bộ; indexing và hỏi đáp có trích dẫn là định hướng chức năng tổng thể của sản phẩm.
+
+## Lần 2 - Feature nào đã hoàn thành, feature nào còn dang dở?
+
+Theo artefact trạng thái, có **5 feature đã hoàn thành** và **2 feature chưa bắt đầu**. Không có feature nào được đánh dấu `in-progress`; vì vậy “còn dang dở” ở đây chính xác là các feature `not-started`.
+
+### Đã hoàn thành
+
+| Feature | Trạng thái | Kết luận | File bằng chứng |
+| --- | --- | --- | --- |
+| `window-launch` - Window Launch | `pass` | Ứng dụng Electron mở `BrowserWindow` với preload script. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 5-11) |
+| `document-list` - Document List Panel | `pass` | Sidebar hiển thị danh sách tài liệu và empty state. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 13-19) |
+| `question-panel` - Question Panel | `pass` | Thanh nhập câu hỏi gửi dữ liệu qua IPC. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 21-27) |
+| `data-directory` - Data Directory | `pass` | `PersistenceService` quản lý thư mục `userData/knowledge-base-data`. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 29-35) |
+| `document-import` - Document Import | `pass` | Người dùng có thể import `.txt` và `.md`; hiện mới là import trong phiên chạy. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 37-43) |
+
+### Chưa hoàn thành
+
+| Feature | Trạng thái | Kết luận | File bằng chứng |
+| --- | --- | --- | --- |
+| `document-detail` - Document Detail with Content | `not-started` | Chưa hoàn thiện màn hình hiển thị toàn bộ nội dung tài liệu, metadata và nút xóa. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 45-51) |
+| `basic-persistence` - Basic Persistence | `not-started` | Chưa lưu tài liệu để tồn tại qua các lần khởi động lại ứng dụng. `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 53-59) |
+
+### Kết luận ngắn
+
+Luồng import đã hoạt động ở mức session-only; hai phần việc tiếp theo là **xem chi tiết nội dung tài liệu** và **persistence qua restart**.
+
+## Lần 3 - Những thay đổi nào có vẻ đã được thực hiện trong phiên trước?
+
+Các thay đổi có vẻ đã được thực hiện trong phiên trước tập trung vào feature **Document Import**. Workspace không có lịch sử commit riêng cho phiên đó; các thay đổi đang ở dạng chưa commit so với commit gốc `e9da996`, nên một số chi tiết được suy luận từ diff mã nguồn.
+
+| Thay đổi có vẻ đã thực hiện | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| Feature `document-import` đã được chuyển từ `not-started` sang `pass`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 37-43) |
+| Phiên trước ghi nhận đã triển khai import tài liệu theo kiểu **session-only**, có resolve đường dẫn qua preload, kiểm tra extension, giới hạn 10 MB và đã chạy `npm run check`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 42-43, `testedAt: "2026-05-27T07:54:49Z"`) |
+| Preload bridge đã được bổ sung API `documents.getPathForFile(file)` sử dụng Electron `webUtils.getPathForFile`, để renderer lấy đường dẫn file trước khi gọi import qua IPC. | `Suy luận từ mã nguồn` | `src/preload/preload.ts`; `src/renderer/types.d.ts` |
+| UI import đã được đổi để nhận `File`, hiển thị trạng thái `Importing...`, hiển thị lỗi và thông báo hỗ trợ `.txt`, `.md` tối đa 10 MB. | `Suy luận từ mã nguồn` | `src/renderer/App.tsx`; `src/renderer/components/ImportPanel.tsx` |
+| `DocumentService` đã được đổi sang quản lý danh sách tài liệu trong bộ nhớ, đồng thời thêm kiểm tra file tồn tại, đúng định dạng `.txt`/`.md`, là file thường và không vượt quá 10 MB. | `Suy luận từ mã nguồn` | `src/services/document-service.ts` |
+| Vì `DocumentService` hiện lưu documents trong mảng bộ nhớ thay vì ghi metadata/content bằng `PersistenceService`, import chưa tồn tại qua lần restart ứng dụng. | `Rõ ràng từ artefact trạng thái` và được củng cố bởi mã nguồn | `feature_list.json` (dòng 42); `src/services/document-service.ts` |
+| Một số sửa đổi phụ đã được thực hiện để ứng dụng build được: điều chỉnh đường dẫn import type trong renderer, loại bỏ import React/Chunk không dùng và cập nhật kiểu `Chunk`. | `Suy luận từ mã nguồn` | `src/renderer/App.tsx`; `src/renderer/components/DocumentDetail.tsx`; `src/services/qa-service.ts` |
+
+### Chưa thể khẳng định
+
+| Kết luận | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| Ai thực hiện chính xác các thay đổi này và chúng thuộc phiên làm việc nào ngoài thời điểm test được ghi trong artefact. | `Không xác định / cần hỏi lại` | Git chỉ cho thấy các file đang modified so với commit gốc; `feature_list.json` chỉ ghi thời điểm kiểm thử feature import. |
+| Feature `document-detail` hoặc `basic-persistence` đã được bắt đầu triển khai trong phiên trước. | `Không xác định / cần hỏi lại` | `feature_list.json` (dòng 45-59) vẫn ghi cả hai là `not-started`; `src/renderer/components/DocumentDetail.tsx` còn TODO tải nội dung. |
+
+### Kết luận ngắn
+
+Thay đổi chính của phiên trước có vẻ là hoàn thiện **Document Import ở mức session-only**, bao gồm luồng chọn file, validation và phản hồi UI; persistence và xem đầy đủ nội dung tài liệu chưa được hoàn thành.
+
+## Lần 4 - Những kiểm chứng nào đã chạy, và kết quả nào còn chưa có bằng chứng?
+
+### Kiểm chứng đã chạy theo artefact
+
+| Kiểm chứng | Kết quả ghi nhận | Đánh dấu | File bằng chứng |
+| --- | --- | --- | --- |
+| `window-launch` | `pass`, verified working; kiểm tra lúc `2026-03-30T10:00:00Z`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 5-11) |
+| `document-list` | `pass`, verified working; kiểm tra lúc `2026-03-30T10:05:00Z`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 13-19) |
+| `question-panel` | `pass`, verified working; kiểm tra lúc `2026-03-30T10:08:00Z`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 21-27) |
+| `data-directory` | `pass`, verified working; kiểm tra lúc `2026-03-30T10:10:00Z`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 29-35) |
+| `document-import` | `pass`; artefact ghi import session-only, validation extension và 10 MB, cùng với `npm run check passed`; kiểm tra lúc `2026-05-27T07:54:49Z`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 37-43) |
+
+### Phạm vi của kiểm chứng build
+
+| Kết luận | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| `npm run check` thực hiện TypeScript type-check cho hai cấu hình, không phải test hành vi: `tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.json`. | `Rõ ràng từ artefact trạng thái` | `package.json` (dòng 6-11) |
+| Việc `npm run check` pass không tự chứng minh luồng chọn/import file đã được chạy thành công trên giao diện Electron. | `Suy luận từ mã nguồn` | `package.json` (dòng 6-11); `feature_list.json` (dòng 42) |
+
+### Kết quả còn chưa có bằng chứng
+
+| Kết quả | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| Hiển thị đầy đủ nội dung tài liệu, metadata và thao tác xóa trong `document-detail`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 45-51): `status: "not-started"`, `evidence: null`, `testedAt: null`. |
+| Lưu tài liệu qua lần khởi động lại ứng dụng trong `basic-persistence`. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 53-59): `status: "not-started"`, `evidence: null`, `testedAt: null`. |
+| `npm test` / `vitest run` đã từng được chạy và pass. | `Không xác định / cần hỏi lại` | `package.json` (dòng 10) có script test, nhưng không có artefact kết quả chạy test. |
+| Kiểm thử runtime chi tiết cho import: chọn file thật, từ chối định dạng không hỗ trợ và từ chối file trên 10 MB. | `Không xác định / cần hỏi lại` | `feature_list.json` (dòng 42) chỉ ghi tóm tắt, không có log/report từng trường hợp. |
+| Phương pháp hoặc output kiểm thử cụ thể của bốn feature được mang sang từ P1. | `Không xác định / cần hỏi lại` | `feature_list.json` (dòng 5-35) chỉ ghi `Carried over from P1 -- verified working`. |
+
+### Kết luận ngắn
+
+Artefact xác nhận năm feature ở trạng thái `pass` và ghi nhận `npm run check` đã pass cho `document-import`. Chưa có bằng chứng về test suite, kiểm thử runtime chi tiết, `document-detail` hoặc `basic-persistence`.
+
+## Lần 5 - Nếu tiếp tục ngay bây giờ, việc đầu tiên bạn sẽ làm là gì?
+
+Việc đầu tiên tôi sẽ làm là **triển khai đường dữ liệu để `DocumentDetail` có thể tải và hiển thị nội dung đầy đủ của tài liệu đã import**: bổ sung khả năng đọc/trả về content ở service và IPC/preload, sau đó nối vào component `DocumentDetail`.
+
+| Kết luận | Đánh dấu | File bằng chứng |
+| --- | --- | --- |
+| `document-detail` là feature chưa hoàn thành xuất hiện đầu tiên trong danh sách trạng thái, yêu cầu hiển thị full content, metadata và nút delete. | `Rõ ràng từ artefact trạng thái` | `feature_list.json` (dòng 45-51) |
+| Phần metadata và nút delete đã có khung UI, nhưng nội dung tài liệu chưa được tải; component đang có TODO rõ ràng cho việc này. | `Suy luận từ mã nguồn` | `src/renderer/components/DocumentDetail.tsx` (dòng 12, 18-19, 83-96) |
+| Hiện tại `DocumentService` chỉ giữ metadata của tài liệu trong bộ nhớ; khi import, service không đọc hoặc lưu text content để `DocumentDetail` lấy về. | `Suy luận từ mã nguồn` | `src/services/document-service.ts` (dòng 17-47) |
+| IPC hiện có `documents:get`, nhưng API này chỉ trả `Document` metadata; chưa có contract rõ ràng để trả nội dung file. | `Suy luận từ mã nguồn` | `src/main/ipc-handlers.ts` (dòng 25-27); `src/shared/types.ts` (dòng 3-11) |
+| Không có artefact tuyên bố `document-detail` phải được ưu tiên hơn `basic-persistence`; việc chọn nó trước dựa trên thứ tự feature và khoảng trống triển khai rõ nhất trong mã hiện tại. | `Không xác định / cần hỏi lại` về ưu tiên chính thức; `Suy luận từ mã nguồn` về lựa chọn kỹ thuật | `feature_list.json` (dòng 45-59); `src/renderer/components/DocumentDetail.tsx` (dòng 18-19) |
+
+### Kết luận ngắn
+
+Bước đầu tiên hợp lý là hoàn thiện phần còn thiếu rõ nhất của `document-detail`: **đưa content từ file import qua service/IPC/preload đến UI để người dùng thực sự xem được nội dung tài liệu**.

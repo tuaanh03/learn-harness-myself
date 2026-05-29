@@ -1,0 +1,78 @@
+{
+  "project": "project-01",
+  "description": "Baseline Electron knowledge base with minimal harness",
+  "features": [
+    {
+      "id": "window-launch",
+      "name": "Window Launch",
+      "description": "Electron app opens a BrowserWindow with correct dimensions and preload script",
+      "status": "pass",
+      "evidence": "Visible launch smoke test on 2026-05-25 observed an Electron process with MainWindowTitle 'Knowledge Base'; src/main/main.ts configures 1200x800 with contextIsolation=true and nodeIntegration=false.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "document-list",
+      "name": "Document List Panel",
+      "description": "Left sidebar shows imported documents with empty state message",
+      "status": "pass",
+      "evidence": "src/renderer/components/DocumentList.tsx renders empty-state text and metadata cards populated through the typed documents.list IPC bridge; npm run check passes.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "question-panel",
+      "name": "Question Panel",
+      "description": "Bottom input bar accepts questions and submits via IPC",
+      "status": "pass",
+      "evidence": "QuestionPanel submits questions through window.knowledgeBase.qa.ask; tests/knowledge-base.test.ts verifies an answer returns a document chunk citation and persists history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "data-directory",
+      "name": "Data Directory",
+      "description": "PersistenceService creates and manages userData/knowledge-base-data directory",
+      "status": "pass",
+      "evidence": "PersistenceService creates data/documents/index directories and performs atomic JSON writes; lifecycle tests exercise persisted content, chunks, manifest, and Q&A history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "document-management",
+      "name": "Document Management",
+      "description": "Users import supported local documents, inspect metadata, and delete associated stored data",
+      "status": "pass",
+      "evidence": "Native import dialog accepts .txt/.md files; DocumentService enforces extension and 10 MB constraints, copies content with unique names, and deletes content/chunks/index metadata. Covered by tests/knowledge-base.test.ts.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "text-indexing",
+      "name": "Text Indexing",
+      "description": "Documents are split into paragraph-aware chunks and can be indexed individually or as a library",
+      "status": "pass",
+      "evidence": "IndexingService persists index/index-meta.json and per-document chunks with charCount/wordCount metadata; UI provides Index Document and Index All Documents controls; lifecycle test confirms indexed chunks.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "grounded-qa",
+      "name": "Grounded Q&A",
+      "description": "Questions return local answers with chunk citations, confidence scoring, and persisted history",
+      "status": "pass",
+      "evidence": "QaService ranks stored chunks and returns 0.85 confidence with citations while App renders answer history; lifecycle test verifies citation title, confidence, and persisted history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "latest-answer-citation-count",
+      "name": "Latest Answer Citation Count",
+      "description": "The interface displays the number of citations associated with the most recent answer",
+      "status": "pass",
+      "evidence": "LatestCitationCount derives the count from the final Q&A history entry and is rendered in App above answer history; tests/latest-citation-count.test.ts verifies that only the latest answer's count is displayed and that no count appears before an answer exists. npm.cmd run check, npm.cmd test (4 tests), and npm.cmd run build passed; an Electron smoke launch displayed the Knowledge Base window.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "status-bar",
+      "name": "Status Bar",
+      "description": "The UI displays overall index status, document count, and last activity time",
+      "status": "pass",
+      "evidence": "GET_STATUS IPC handler returns IndexingService.getAppStatus(); App refreshes the typed status and StatusBar displays index state, document count, activity time, and working indicator.",
+      "testedAt": "2026-05-25"
+    }
+  ]
+}

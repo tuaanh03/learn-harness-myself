@@ -1,0 +1,86 @@
+{
+  "project": "project-01",
+  "description": "Baseline Electron knowledge base with minimal harness",
+  "features": [
+    {
+      "id": "window-launch",
+      "name": "Window Launch",
+      "description": "Electron app opens a BrowserWindow with correct dimensions and preload script",
+      "status": "pass",
+      "evidence": "Visible launch smoke test on 2026-05-25 observed an Electron process with MainWindowTitle 'Knowledge Base'; src/main/main.ts configures 1200x800 with contextIsolation=true and nodeIntegration=false.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "document-list",
+      "name": "Document List Panel",
+      "description": "Left sidebar shows imported documents with empty state message",
+      "status": "pass",
+      "evidence": "src/renderer/components/DocumentList.tsx renders empty-state text and metadata cards populated through the typed documents.list IPC bridge; npm run check passes.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "question-panel",
+      "name": "Question Panel",
+      "description": "Bottom input bar accepts questions and submits via IPC",
+      "status": "pass",
+      "evidence": "QuestionPanel submits questions through window.knowledgeBase.qa.ask; tests/knowledge-base.test.ts verifies an answer returns a document chunk citation and persists history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "data-directory",
+      "name": "Data Directory",
+      "description": "PersistenceService creates and manages userData/knowledge-base-data directory",
+      "status": "pass",
+      "evidence": "PersistenceService creates data/documents/index directories and performs atomic JSON writes; lifecycle tests exercise persisted content, chunks, manifest, and Q&A history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "document-management",
+      "name": "Document Management",
+      "description": "Users import supported local documents, inspect metadata, and delete associated stored data",
+      "status": "pass",
+      "evidence": "Native import dialog accepts .txt/.md files; DocumentService enforces extension and 10 MB constraints, copies content with unique names, and deletes content/chunks/index metadata. Covered by tests/knowledge-base.test.ts.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "text-indexing",
+      "name": "Text Indexing",
+      "description": "Documents are split into paragraph-aware chunks and can be indexed individually or as a library",
+      "status": "pass",
+      "evidence": "IndexingService persists index/index-meta.json and per-document chunks with charCount/wordCount metadata; UI provides Index Document and Index All Documents controls; lifecycle test confirms indexed chunks.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "grounded-qa",
+      "name": "Grounded Q&A",
+      "description": "Questions return local answers with chunk citations, confidence scoring, and persisted history",
+      "status": "pass",
+      "evidence": "QaService ranks stored chunks and returns 0.85 confidence with citations while App renders answer history; lifecycle test verifies citation title, confidence, and persisted history.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "latest-citation-count",
+      "name": "Latest Answer Citation Count",
+      "description": "The Q&A interface displays how many citations are included in the most recent answer",
+      "status": "pass",
+      "evidence": "src/renderer/components/LatestCitationCount.tsx renders the citation total from the final QA history entry and App displays it above the question input. tests/knowledge-base.test.ts verifies selection of the newest response and zero-citation rendering; npm.cmd run check, npm.cmd test (4 tests), npm.cmd run build, and a visible Electron window smoke launch passed on 2026-05-25.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "latest-answer-confidence",
+      "name": "Latest Answer Confidence",
+      "description": "The Q&A interface displays a High, Medium, or Low confidence label for the most recent answer only",
+      "status": "pass",
+      "evidence": "src/renderer/components/LatestAnswerConfidence.tsx maps response confidence to High, Medium, or Low, and src/renderer/App.tsx renders it beside only the latest answer. tests/knowledge-base.test.ts covers no-answer rendering and the 0.8/0.5 thresholds; npm.cmd run check, npm.cmd test (8 tests), npm.cmd run build, and a visible Electron window smoke launch passed on 2026-05-25.",
+      "testedAt": "2026-05-25"
+    },
+    {
+      "id": "status-bar",
+      "name": "Status Bar",
+      "description": "The UI displays overall index status, document count, and last activity time",
+      "status": "pass",
+      "evidence": "GET_STATUS IPC handler returns IndexingService.getAppStatus(); App refreshes the typed status and StatusBar displays index state, document count, activity time, and working indicator.",
+      "testedAt": "2026-05-25"
+    }
+  ]
+}
